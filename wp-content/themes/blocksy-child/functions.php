@@ -7,3 +7,7 @@ add_action('init', function () {
     }
 });
 
+// Remove coluna "Admin Fee" da lista de pedidos vendor
+add_filter('wcfmmp_product_commission', function ($commission, $product_id, $vendor_id) {
+    return 0;
+}, 50, 3);
