@@ -13,13 +13,16 @@
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 
-class WCFM_Orders_Controller {
+class WCFM_Orders_Controller
+{
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->processing();
 	}
 
-	public function processing() {
+	public function processing()
+	{
 		global $WCFM, $wpdb, $_POST;
 
 		$length = absint($_POST['length']);
@@ -120,23 +123,23 @@ class WCFM_Orders_Controller {
 
 		if (OrderUtil::custom_orders_table_usage_is_enabled()) {
 			$status_filter = '';
-			if (apply_filters('wcfm_force_woocommerce_valid_order_status_only',true)) {
+			if (apply_filters('wcfm_force_woocommerce_valid_order_status_only', true)) {
 				$wc_order_statuses	= array_keys(wc_get_order_statuses());
-				
+
 				// Prepare the placeholders for the IN clause
 				$placeholders_string 	= implode(', ', array_fill(0, count($wc_order_statuses), '%s'));
-				
-				$status_filter .= $wpdb->prepare( " AND `status` IN ({$placeholders_string})", $wc_order_statuses );
+
+				$status_filter .= $wpdb->prepare(" AND `status` IN ({$placeholders_string})", $wc_order_statuses);
 			}
-			
+
 			$orders_table 	= OrdersTableDataStore::get_orders_table_name();
 			$query 			= "SELECT `status`, COUNT( * ) AS `num_posts` FROM {$orders_table} WHERE `type` = 'shop_order' {$status_filter} GROUP BY `status`";
 			$results		= (array) $wpdb->get_results($query, ARRAY_A);
 
-			$counts  = array_fill_keys( get_post_stati(), 0 );
+			$counts  = array_fill_keys(get_post_stati(), 0);
 
-			foreach ( $results as $row ) {
-				$counts[ $row['status'] ] = $row['num_posts'];
+			foreach ($results as $row) {
+				$counts[$row['status']] = $row['num_posts'];
 			}
 
 			$wcfm_orders_counts = (object) $counts;
