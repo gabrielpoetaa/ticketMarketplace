@@ -7,6 +7,16 @@ add_action('init', function () {
     }
 });
 
+// Adicionando Tailwind
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style(
+        'blocksy-child-tailwind',
+        get_stylesheet_directory_uri() . '/src/output.css',
+        [],
+        filemtime(get_stylesheet_directory() . '/src/output.css')
+    );
+});
+
 // Remove coluna "Admin Fee" da lista de pedidos vendor
 add_filter('wcfmmp_product_commission', function ($commission, $product_id, $vendor_id) {
     return 0;
